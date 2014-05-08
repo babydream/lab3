@@ -1,0 +1,65 @@
+#
+##-- Synplicity, Inc.
+##-- Project file U:/floatUnits/test/Xilinx-ML505-LX110T/trial/FPGA_TOP_ML505_UARTLoopback.prj.
+##-- Generated using ISE.
+
+#implementation: "FPGA_TOP_ML505_UARTLoopback"
+impl -add "FPGA_TOP_ML505_UARTLoopback"
+
+##utility procedures
+proc findmatch {spec args} {  set lArglist [join $args " "];  set nIndex [lsearch -glob $lArglist $spec];  if {$nIndex != -1} {  return [lindex $lArglist $nIndex];  } else {  return $spec;  }  }
+         
+proc findpackage {spec} { findmatch $spec [partdata -package [part]]}
+proc findgrade {spec} { findmatch $spec [partdata -grade   [part]]}
+
+##device options
+set_option -technology VIRTEX5
+set_option -part xc5vlx110t
+set_option -package [findpackage {ff1136}]
+set_option -speed_grade [findgrade {-3}]
+
+##add_file to library options
+
+##add_file options
+add_file -verilog {"C:/Program Files (x86)/Synplicity/fpga_C200906/bin/../lib/xilinx/unisim.v"}
+add_file {../UARTDistributionDependencies.v}
+add_file {../FPGA_TOP_ML505_UARTLoopback.v}
+
+##compilation/mapping options
+set_option -resource_sharing 1
+set_option -default_enum_encoding default
+set_option -top_module FPGA_TOP_ML505_UARTLoopback
+set_option -use_fsm_explorer 0
+
+##map options
+set_option -frequency auto
+set_option -fanout_limit 100
+set_option -disable_io_insertion 0
+set_option -pipe 1
+set_option -modular 0
+set_option -retiming 0
+
+##sequential_optimizations options
+set_option -symbolic_fsm_compiler 1
+
+##simulation options
+set_option -write_verilog 0
+set_option -write_vhdl 0
+
+##automatic place and route (vendor) options
+set_option -write_apr_constraint 1
+
+##implementation attributes
+set_option -num_critical_paths 0
+set_option -num_startend_points 0
+
+##other command line options
+
+set_option -vlog_std v2001
+set_option -compiler_compatible 1
+
+##set result format/file last
+project -result_file {U:/floatUnits/test/Xilinx-ML505-LX110T/trial/FPGA_TOP_ML505_UARTLoopback.edn}
+
+##constraint file
+add_file -constraint {U:/floatUnits/test/Xilinx-ML505-LX110T/trial/FPGA_TOP_ML505_UARTLoopback.sdc}

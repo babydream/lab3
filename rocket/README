@@ -1,0 +1,8 @@
+Source repository for the Rocket RISC-V processor.
+
+To use this processor, include this repo as a git submodule and add it as 
+to your chip's build.scala as a Project, e.g.
+lazy val rocket = Project("rocket", file("rocket"), settings = buildSettings)
+
+Rocket depends on the Chisel and Hardloat projects, make sure these libraries' 
+jars are installed.

@@ -1,0 +1,121 @@
+Notes on Rocket's virtual memory system implementation
+------------------------------------------------------
+
+* physical addresses are 40 bits wide = 1TB max physical memory
+* virtual addresses are 43 bits wide
+  * 8kB pages = 13 bit page index (byte addressing)
+  * Page table entries (PTEs) are 64 bits each, 2^10 (1024) PTEs per 8KB memory page
+  * 30 bit virtual page number (VPN) gets mapped to a 27 bit physical page number (PPN)
+  * 3 levels of PTEs, 10 VPN bits are used to index into a table at each level of the hierarchy
+  * Could theoretically support 3 different page sizes: 8GB, 8MB, 8KB
+  * TLB page table walks are implemented in hardware
+
+* physical address of the top level page table is stored in the page table base register (PTBR)
+* an entry in a non-leaf page table can either be:
+  * a page table descriptor - pointer to a page table at the next level in the hierarchy, or
+  * a page table entry (a VPN to PPN mapping, plus status and permission bits)
+
+The page table entry format is:
+* status bits
+  bit  0: Entry is a page table descriptor
+  bit  1: Entry is a page table entry
+  bit  2: Referenced (for use by OS swapping code)
+  bit  3: Dirty (for use by OS swapping code)
+* permission bits
+  bit  4: User eXecute permission
+  bit  5: User Read permission
+  bit  6: User Write permission
+  bit  7: Supervisor eXecute permission
+  bit  8: Supervisor Read permission
+  bit  9: Supervisor Write permission
+  bits 11-10: Unused (padding)
+* mapping
+  bits 38-12: Physical page number
+
+The TLB entry format (for 8KB pages) is:
+* permission bits
+  bit  0: User eXecute permission
+  bit  1: User Read permission
+  bit  2: User Write permission
+  bit  3: Supervisor eXecute permission
+  bit  4: Supervisor Read permission
+  bit  5: Supervisor Write permission
+* 128 possible address space IDs
+  bits 13-7: ASID
+* mapping
+  bits 40-14: Physical page number
+
+* plan is to dedicate at least one TLB entry for huge (8GB) page mappings 
+  * likely use case: OS kernel
+* TLB format will be the same except the physical page number will occupy fewer (7) bits.
+* TLB entries are stored in an SRAM array.  
+* TLB entry metadata (valid bit, LRU bits) is stored in an array of latches
+  * LRU bits need to be updated on every access
+  * parallel access to all valid bits is necessary for TLB flushes
+  * and for finding an unused TLB entry (if one exists)
+
+Notes on virtual memory system and supervisor mode control registers/instructions:
+----------------------------------------------------------------------------------
+
+Privileged control registers:
+
+    status   - keeps track of CPU's operating state
+    evec     - exception handler address
+    epc      - virtual address of the instruction that caused an exception
+    cause    - cause of an exception
+    badvaddr - faulting address for access fault exceptions
+    k0, k1   - scratch registers for exception handlers
+    tohost   - register read by host machine
+    fromhost - register written by host machine
+    count    - cycle counter for timer
+    compare  - timer compare value
+    ptbr     - page table base register
+    pc_basebound - 
+    data_basebound -
+
+Page table base register holds the physical address of the top level page table.
+PTBR format:
+
+bits 13-0  : all 0s for standard VM operation, set bit 0 high to indicate base/bound mode
+bits 39-14 : MSB of PT address
+bits 55-40 : undefined - will be used for base/bound mode
+bits 63-56 : current ASID
+
+The ASID from the PTBR must be connected to the TLBs - beware of hazards between
+setting PTBR and its use since PTBR isn't updated until commit. 
+
+TLB entries contain (in addition to the mapping):
+    an ASID (address space ID) to avoid the need to flush the TLB after a context switch
+    an indication of what kind of mapping it is (8kB or bigger)
+    permission (read, write, execute)
+
+TODO: Need to define supervisor mode instructions/control registers to do TLB 
+flushes/invalidations (soon!) and TLB shootdowns (eventually).
+
+TLB shootdown notes:
+--------------------
+
+We intend to use a message passing network to handle this kind of core-to-core
+communication.  In our proposed scheme, a single instruction would atomically inject a
+message into the message passing network.  The fields in such a message would be:
+    2 64-bit operands (from registers)
+    - for a TLB shootdown, these would be the remote node's address and the virtual
+      address mapping/ASID to invalidate
+    - these could also be used to pass a function pointer + argument to implement
+      "active" messages 
+    an immediate field (to specify the type of message)
+    
+Such messages can either cause an interrupt on the remote node and be handled by
+software, or handled transparently by the hardware.  TLB shootdowns will be handled by hardware.
+When a message is injected to the network, a counter is incremented, and when
+an ACK is received from a remote note, the counter is decremented.  After issuing
+a batch of TLB shootdowns, a special sync instruction will wait until all the
+ACKs have been received.  By the time an ACK is received by the sender, the TLB shootdown is
+guaranteed to have completed on the remote node.  Active messages which cause a
+trap require the software to manage synchronization between nodes on the network
+(most likely though memory).
+
+
+
+
+

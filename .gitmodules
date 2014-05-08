@@ -1,0 +1,39 @@
+[submodule "uncore"]
+	path = uncore
+	url = git@github.com:ucb-bar/uncore.git
+[submodule "dramsim2"]
+	path = dramsim2
+	url = git@github.com:dramninjasUMD/DRAMSim2.git
+[submodule "ucbsc"]
+	path = ucbsc
+	url = git@github.com:ucb-bar/ucbsc.git
+[submodule "riscv-tests"]
+	path = riscv-tests
+	url = git@github.com:ucb-bar/riscv-tests.git
+[submodule "riscv-tools"]
+	path = riscv-tools
+	url = git@github.com:ucb-bar/riscv-tools.git
+[submodule "riscv-vt-tests"]
+	path = riscv-vt-tests
+	url = git@github.com:ucb-bar/riscv-vt-tests.git
+[submodule "hwacha"]
+	path = hwacha
+	url = git@github.com:ucb-bar/hwacha.git
+[submodule "rocket"]
+	path = rocket
+	url = git@github.com:ucb-bar/riscv-rocket.git
+[submodule "chisel"]
+	path = chisel
+	url = git@github.com:ucb-bar/chisel.git
+[submodule "hardfloat"]
+	path = hardfloat
+	url = git@github.com:ucb-bar/hardfloat.git
+[submodule "boom"]
+	path = boom
+	url = git@github.com:ucb-bar/riscv-boom.git
+[submodule "rekall"]
+	path = rekall
+	url = git@github.com:ucb-bar/rekall.git
+[submodule "micron-models"]
+	path = micron-models
+	url = git@github.com:ucb-bar/micron-models.git

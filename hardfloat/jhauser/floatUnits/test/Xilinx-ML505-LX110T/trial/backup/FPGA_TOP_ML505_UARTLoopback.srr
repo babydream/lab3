@@ -1,0 +1,25 @@
+#Build: Synplify Pro C-2009.06, Build 063R, May 19 2009
+#install: C:\Program Files (x86)\Synplicity\fpga_C200906
+#OS:  6.1
+#Hostname: SUPERSQUISH
+
+#Implementation: trial
+
+#Thu Jul 08 11:53:29 2010
+
+$ Start of Compile
+#Thu Jul 08 11:53:29 2010
+
+Synopsys Verilog Compiler, version comp400rc, Build 020R, built May 20 2009
+Copyright (C) 1994-2009, Synopsys Inc.  All Rights Reserved
+
+@I::"C:\Program Files (x86)\Synplicity\fpga_C200906\lib\xilinx\unisim.v"
+@I::"C:\Program Files (x86)\Synplicity\fpga_C200906\lib\xilinx\unisim_m10i.v"
+@I::"C:\Program Files (x86)\Synplicity\fpga_C200906\bin\..\lib\xilinx\unisim.v"
+@I::"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v"
+@E|Can't open file Const.v
+@END
+Process took 0h:00m:01s realtime, 0h:00m:01s cputime
+# Thu Jul 08 11:53:30 2010
+
+###########################################################]

@@ -1,0 +1,21 @@
+gcc -c -Werror-implicit-function-declaration "-DINLINE=extern inline" -I. -I../../source -I../../../SoftFloat-3/source/8086 -I../../../SoftFloat-3/source -iquote -O2 -o writeCase_common.o ../../source/writeCase_common.c
+ar crs testfloat.a fail.o functions_common.o functionInfos.o standardFunctionInfos.o random.o genCases_common.o genCases_ui32.o genCases_ui64.o genCases_i32.o genCases_i64.o genCases_f32.o genCases_f64.o genCases_writeTestsTotal.o verCases_common.o verCases_writeFunctionName.o readHex.o writeHex.o writeCase_common.o writeCase_a_ui32.o writeCase_a_ui64.o writeCase_a_f32.o writeCase_ab_f32.o writeCase_abc_f32.o writeCase_a_f64.o writeCase_ab_f64.o writeCase_abc_f64.o writeCase_z_bool.o writeCase_z_ui32.o writeCase_z_ui64.o writeCase_z_f32.o writeCase_z_f64.o testLoops_common.o test_a_ui32_z_f32.o test_a_ui32_z_f64.o test_a_ui64_z_f32.o test_a_ui64_z_f64.o test_a_i32_z_f32.o test_a_i32_z_f64.o test_a_i64_z_f32.o test_a_i64_z_f64.o test_a_f32_z_ui32_rx.o test_a_f32_z_ui64_rx.o test_a_f32_z_i32_rx.o test_a_f32_z_i64_rx.o test_a_f32_z_ui32_x.o test_a_f32_z_ui64_x.o test_a_f32_z_i32_x.o test_a_f32_z_i64_x.o test_a_f32_z_f64.o test_az_f32.o test_az_f32_rx.o test_abz_f32.o test_abcz_f32.o test_ab_f32_z_bool.o test_a_f64_z_ui32_rx.o test_a_f64_z_ui64_rx.o test_a_f64_z_i32_rx.o test_a_f64_z_i64_rx.o test_a_f64_z_ui32_x.o test_a_f64_z_ui64_x.o test_a_f64_z_i32_x.o test_a_f64_z_i64_x.o test_a_f64_z_f32.o test_az_f64.o test_az_f64_rx.o test_abz_f64.o test_abcz_f64.o test_ab_f64_z_bool.o
+gcc -o testsoftfloat slowfloat.o testsoftfloat.o testfloat.a ../../../SoftFloat-3/build/Darwin/softfloat.a
+Undefined symbols:
+  "_writeCase_trueNamePtr", referenced from:
+      _main in testsoftfloat.o
+      _writeCase_z_ui32 in testfloat.a(writeCase_z_ui32.o)
+      _writeCase_z_ui64 in testfloat.a(writeCase_z_ui64.o)
+      _writeCase_z_f32 in testfloat.a(writeCase_z_f32.o)
+      _writeCase_z_f64 in testfloat.a(writeCase_z_f64.o)
+      _writeCase_z_bool in testfloat.a(writeCase_z_bool.o)
+  "_writeCase_testNamePtr", referenced from:
+      _main in testsoftfloat.o
+      _writeCase_z_ui32 in testfloat.a(writeCase_z_ui32.o)
+      _writeCase_z_ui64 in testfloat.a(writeCase_z_ui64.o)
+      _writeCase_z_f32 in testfloat.a(writeCase_z_f32.o)
+      _writeCase_z_f64 in testfloat.a(writeCase_z_f64.o)
+      _writeCase_z_bool in testfloat.a(writeCase_z_bool.o)
+ld: symbol(s) not found
+collect2: ld returned 1 exit status
+make: *** [testsoftfloat] Error 1

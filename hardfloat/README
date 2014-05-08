@@ -1,0 +1,15 @@
+RUN THE FOLLOWING COMMANDS
+>> git submodule update --init	#this will update the chisel directory
+>> cd scripts    	     	#this is the directory that will add any dependencies
+>> source install.sh		#run the shell script to configure jhauser folder and setup
+
+TO RUN EMULATOR (from root dir)
+>> cd emulator
+>> make
+>> make run
+
+TO RUN VERILOG (from root dir)
+>> cd verilog/fpu
+>> make
+>> make run
+

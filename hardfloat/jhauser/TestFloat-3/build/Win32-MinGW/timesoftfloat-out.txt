@@ -1,0 +1,233 @@
+  56.5345 Mop/s: ui32_to_f32, rounding nearest/even
+  57.0155 Mop/s: ui32_to_f32, rounding toward zero (minMag)
+  56.5695 Mop/s: ui32_to_f32, rounding down (min)
+  56.3470 Mop/s: ui32_to_f32, rounding up (max)
+  56.4098 Mop/s: ui32_to_f32, rounding nearest/away (nearest_maxMag)
+ 119.7699 Mop/s: ui32_to_f64
+  46.5876 Mop/s: ui64_to_f32, rounding nearest/even
+  45.8471 Mop/s: ui64_to_f32, rounding toward zero (minMag)
+  45.0550 Mop/s: ui64_to_f32, rounding down (min)
+  46.7904 Mop/s: ui64_to_f32, rounding up (max)
+  46.5585 Mop/s: ui64_to_f32, rounding nearest/away (nearest_maxMag)
+  48.9649 Mop/s: ui64_to_f64, rounding nearest/even
+  49.1161 Mop/s: ui64_to_f64, rounding toward zero (minMag)
+  46.8503 Mop/s: ui64_to_f64, rounding down (min)
+  48.8038 Mop/s: ui64_to_f64, rounding up (max)
+  49.1834 Mop/s: ui64_to_f64, rounding nearest/away (nearest_maxMag)
+  49.9583 Mop/s: i32_to_f32, rounding nearest/even
+  49.6193 Mop/s: i32_to_f32, rounding toward zero (minMag)
+  48.3176 Mop/s: i32_to_f32, rounding down (min)
+  51.9191 Mop/s: i32_to_f32, rounding up (max)
+  50.2136 Mop/s: i32_to_f32, rounding nearest/away (nearest_maxMag)
+ 101.6466 Mop/s: i32_to_f64
+  38.2485 Mop/s: i64_to_f32, rounding nearest/even
+  36.8077 Mop/s: i64_to_f32, rounding toward zero (minMag)
+  36.5090 Mop/s: i64_to_f32, rounding down (min)
+  38.1495 Mop/s: i64_to_f32, rounding up (max)
+  37.7057 Mop/s: i64_to_f32, rounding nearest/away (nearest_maxMag)
+  42.5237 Mop/s: i64_to_f64, rounding nearest/even
+  42.3737 Mop/s: i64_to_f64, rounding toward zero (minMag)
+  43.5544 Mop/s: i64_to_f64, rounding down (min)
+  43.2727 Mop/s: i64_to_f64, rounding up (max)
+  43.0762 Mop/s: i64_to_f64, rounding nearest/away (nearest_maxMag)
+  44.0010 Mop/s: f32_to_ui32, rounding nearest/even, not exact
+  41.7585 Mop/s: f32_to_ui32, rounding nearest/even, exact
+  45.1633 Mop/s: f32_to_ui32, rounding toward zero (minMag), not exact
+  42.0020 Mop/s: f32_to_ui32, rounding toward zero (minMag), exact
+  43.8838 Mop/s: f32_to_ui32, rounding down (min), not exact
+  43.7467 Mop/s: f32_to_ui32, rounding down (min), exact
+  44.9850 Mop/s: f32_to_ui32, rounding up (max), not exact
+  40.8333 Mop/s: f32_to_ui32, rounding up (max), exact
+  44.1922 Mop/s: f32_to_ui32, rounding nearest/away (nearest_maxMag), not exact
+  41.5256 Mop/s: f32_to_ui32, rounding nearest/away (nearest_maxMag), exact
+  31.5217 Mop/s: f32_to_ui64, rounding nearest/even, not exact
+  32.1553 Mop/s: f32_to_ui64, rounding nearest/even, exact
+  31.3359 Mop/s: f32_to_ui64, rounding toward zero (minMag), not exact
+  30.0533 Mop/s: f32_to_ui64, rounding toward zero (minMag), exact
+  28.4694 Mop/s: f32_to_ui64, rounding down (min), not exact
+  29.5365 Mop/s: f32_to_ui64, rounding down (min), exact
+  30.0531 Mop/s: f32_to_ui64, rounding up (max), not exact
+  29.8136 Mop/s: f32_to_ui64, rounding up (max), exact
+  31.3195 Mop/s: f32_to_ui64, rounding nearest/away (nearest_maxMag), not exact
+  31.9763 Mop/s: f32_to_ui64, rounding nearest/away (nearest_maxMag), exact
+  35.7554 Mop/s: f32_to_i32, rounding nearest/even, not exact
+  39.7988 Mop/s: f32_to_i32, rounding nearest/even, exact
+  36.8544 Mop/s: f32_to_i32, rounding toward zero (minMag), not exact
+  39.4069 Mop/s: f32_to_i32, rounding toward zero (minMag), exact
+  38.1599 Mop/s: f32_to_i32, rounding down (min), not exact
+  40.2221 Mop/s: f32_to_i32, rounding down (min), exact
+  36.7770 Mop/s: f32_to_i32, rounding up (max), not exact
+  39.8697 Mop/s: f32_to_i32, rounding up (max), exact
+  35.4412 Mop/s: f32_to_i32, rounding nearest/away (nearest_maxMag), not exact
+  39.5641 Mop/s: f32_to_i32, rounding nearest/away (nearest_maxMag), exact
+  28.6673 Mop/s: f32_to_i64, rounding nearest/even, not exact
+  28.8637 Mop/s: f32_to_i64, rounding nearest/even, exact
+  28.2653 Mop/s: f32_to_i64, rounding toward zero (minMag), not exact
+  28.1653 Mop/s: f32_to_i64, rounding toward zero (minMag), exact
+  27.4596 Mop/s: f32_to_i64, rounding down (min), not exact
+  27.2983 Mop/s: f32_to_i64, rounding down (min), exact
+  29.7084 Mop/s: f32_to_i64, rounding up (max), not exact
+  29.4921 Mop/s: f32_to_i64, rounding up (max), exact
+  28.5168 Mop/s: f32_to_i64, rounding nearest/away (nearest_maxMag), not exact
+  28.9118 Mop/s: f32_to_i64, rounding nearest/away (nearest_maxMag), exact
+ 132.5238 Mop/s: f32_to_ui32_r_minMag, not exact
+  84.6802 Mop/s: f32_to_ui32_r_minMag, exact
+ 113.2396 Mop/s: f32_to_ui64_r_minMag, not exact
+ 119.2782 Mop/s: f32_to_ui64_r_minMag, exact
+  93.0301 Mop/s: f32_to_i32_r_minMag, not exact
+  83.6868 Mop/s: f32_to_i32_r_minMag, exact
+ 112.8677 Mop/s: f32_to_i64_r_minMag, not exact
+ 101.9538 Mop/s: f32_to_i64_r_minMag, exact
+ 131.4920 Mop/s: f32_to_f64
+  78.9566 Mop/s: f32_roundToInt, rounding nearest/even, not exact
+  92.7974 Mop/s: f32_roundToInt, rounding nearest/even, exact
+  81.6793 Mop/s: f32_roundToInt, rounding toward zero (minMag), not exact
+  88.9447 Mop/s: f32_roundToInt, rounding toward zero (minMag), exact
+  91.5746 Mop/s: f32_roundToInt, rounding down (min), not exact
+ 102.9539 Mop/s: f32_roundToInt, rounding down (min), exact
+  69.8689 Mop/s: f32_roundToInt, rounding up (max), not exact
+  82.0995 Mop/s: f32_roundToInt, rounding up (max), exact
+  73.5071 Mop/s: f32_roundToInt, rounding nearest/away (nearest_maxMag), not exact
+  85.4496 Mop/s: f32_roundToInt, rounding nearest/away (nearest_maxMag), exact
+  23.2395 Mop/s: f32_add, rounding nearest/even
+  22.9620 Mop/s: f32_add, rounding toward zero (minMag)
+  19.8277 Mop/s: f32_add, rounding down (min)
+  20.0360 Mop/s: f32_add, rounding up (max)
+  23.4244 Mop/s: f32_add, rounding nearest/away (nearest_maxMag)
+  23.4695 Mop/s: f32_sub, rounding nearest/even
+  22.9169 Mop/s: f32_sub, rounding toward zero (minMag)
+  19.9458 Mop/s: f32_sub, rounding down (min)
+  20.3657 Mop/s: f32_sub, rounding up (max)
+  23.4466 Mop/s: f32_sub, rounding nearest/away (nearest_maxMag)
+  34.2114 Mop/s: f32_mul, rounding nearest/even, tininess before rounding
+  34.5055 Mop/s: f32_mul, rounding nearest/even, tininess after rounding
+  33.6222 Mop/s: f32_mul, rounding toward zero (minMag), tininess before rounding
+  33.8058 Mop/s: f32_mul, rounding toward zero (minMag), tininess after rounding
+  28.3808 Mop/s: f32_mul, rounding down (min), tininess before rounding
+  28.5731 Mop/s: f32_mul, rounding down (min), tininess after rounding
+  28.4234 Mop/s: f32_mul, rounding up (max), tininess before rounding
+  28.6794 Mop/s: f32_mul, rounding up (max), tininess after rounding
+  34.1602 Mop/s: f32_mul, rounding nearest/away (nearest_maxMag), tininess before rounding
+  34.5752 Mop/s: f32_mul, rounding nearest/away (nearest_maxMag), tininess after rounding
+  27.3176 Mop/s: f32_div, rounding nearest/even
+  27.0250 Mop/s: f32_div, rounding toward zero (minMag)
+  23.7425 Mop/s: f32_div, rounding down (min)
+  24.0811 Mop/s: f32_div, rounding up (max)
+  27.3096 Mop/s: f32_div, rounding nearest/away (nearest_maxMag)
+  16.2436 Mop/s: f32_rem
+  28.7535 Mop/s: f32_sqrt, rounding nearest/even
+  28.3245 Mop/s: f32_sqrt, rounding toward zero (minMag)
+  28.6313 Mop/s: f32_sqrt, rounding down (min)
+  28.5445 Mop/s: f32_sqrt, rounding up (max)
+  29.0351 Mop/s: f32_sqrt, rounding nearest/away (nearest_maxMag)
+ 120.2202 Mop/s: f32_eq
+  55.1272 Mop/s: f32_le
+  55.4309 Mop/s: f32_lt
+ 121.9685 Mop/s: f32_eq_signaling
+  56.2766 Mop/s: f32_le_quiet
+  57.6643 Mop/s: f32_lt_quiet
+  50.9034 Mop/s: f64_to_ui32, rounding nearest/even, not exact
+  50.0732 Mop/s: f64_to_ui32, rounding nearest/even, exact
+  50.6413 Mop/s: f64_to_ui32, rounding toward zero (minMag), not exact
+  49.2041 Mop/s: f64_to_ui32, rounding toward zero (minMag), exact
+  47.7801 Mop/s: f64_to_ui32, rounding down (min), not exact
+  47.3001 Mop/s: f64_to_ui32, rounding down (min), exact
+  49.6373 Mop/s: f64_to_ui32, rounding up (max), not exact
+  47.8627 Mop/s: f64_to_ui32, rounding up (max), exact
+  50.8901 Mop/s: f64_to_ui32, rounding nearest/away (nearest_maxMag), not exact
+  50.1170 Mop/s: f64_to_ui32, rounding nearest/away (nearest_maxMag), exact
+  38.9208 Mop/s: f64_to_ui64, rounding nearest/even, not exact
+  40.7675 Mop/s: f64_to_ui64, rounding nearest/even, exact
+  39.8779 Mop/s: f64_to_ui64, rounding toward zero (minMag), not exact
+  39.1686 Mop/s: f64_to_ui64, rounding toward zero (minMag), exact
+  37.6172 Mop/s: f64_to_ui64, rounding down (min), not exact
+  40.3021 Mop/s: f64_to_ui64, rounding down (min), exact
+  35.6283 Mop/s: f64_to_ui64, rounding up (max), not exact
+  34.4204 Mop/s: f64_to_ui64, rounding up (max), exact
+  39.3267 Mop/s: f64_to_ui64, rounding nearest/away (nearest_maxMag), not exact
+  40.8749 Mop/s: f64_to_ui64, rounding nearest/away (nearest_maxMag), exact
+  51.4729 Mop/s: f64_to_i32, rounding nearest/even, not exact
+  51.4248 Mop/s: f64_to_i32, rounding nearest/even, exact
+  49.8068 Mop/s: f64_to_i32, rounding toward zero (minMag), not exact
+  48.7629 Mop/s: f64_to_i32, rounding toward zero (minMag), exact
+  47.9625 Mop/s: f64_to_i32, rounding down (min), not exact
+  48.0937 Mop/s: f64_to_i32, rounding down (min), exact
+  47.0551 Mop/s: f64_to_i32, rounding up (max), not exact
+  47.7637 Mop/s: f64_to_i32, rounding up (max), exact
+  51.1872 Mop/s: f64_to_i32, rounding nearest/away (nearest_maxMag), not exact
+  51.5481 Mop/s: f64_to_i32, rounding nearest/away (nearest_maxMag), exact
+  39.1241 Mop/s: f64_to_i64, rounding nearest/even, not exact
+  38.3467 Mop/s: f64_to_i64, rounding nearest/even, exact
+  36.3116 Mop/s: f64_to_i64, rounding toward zero (minMag), not exact
+  38.3303 Mop/s: f64_to_i64, rounding toward zero (minMag), exact
+  34.4269 Mop/s: f64_to_i64, rounding down (min), not exact
+  38.5836 Mop/s: f64_to_i64, rounding down (min), exact
+  33.3958 Mop/s: f64_to_i64, rounding up (max), not exact
+  34.1954 Mop/s: f64_to_i64, rounding up (max), exact
+  39.2462 Mop/s: f64_to_i64, rounding nearest/away (nearest_maxMag), not exact
+  38.2234 Mop/s: f64_to_i64, rounding nearest/away (nearest_maxMag), exact
+ 175.8543 Mop/s: f64_to_ui32_r_minMag, not exact
+ 132.8006 Mop/s: f64_to_ui32_r_minMag, exact
+ 175.1034 Mop/s: f64_to_ui64_r_minMag, not exact
+ 137.1251 Mop/s: f64_to_ui64_r_minMag, exact
+ 176.6260 Mop/s: f64_to_i32_r_minMag, not exact
+ 138.0609 Mop/s: f64_to_i32_r_minMag, exact
+ 135.9776 Mop/s: f64_to_i64_r_minMag, not exact
+  99.5398 Mop/s: f64_to_i64_r_minMag, exact
+  46.4369 Mop/s: f64_to_f32, rounding nearest/even, tininess before rounding
+  45.2175 Mop/s: f64_to_f32, rounding nearest/even, tininess after rounding
+  43.3826 Mop/s: f64_to_f32, rounding toward zero (minMag), tininess before rounding
+  43.4418 Mop/s: f64_to_f32, rounding toward zero (minMag), tininess after rounding
+  34.4175 Mop/s: f64_to_f32, rounding down (min), tininess before rounding
+  34.5493 Mop/s: f64_to_f32, rounding down (min), tininess after rounding
+  38.4890 Mop/s: f64_to_f32, rounding up (max), tininess before rounding
+  38.6804 Mop/s: f64_to_f32, rounding up (max), tininess after rounding
+  45.6707 Mop/s: f64_to_f32, rounding nearest/away (nearest_maxMag), tininess before rounding
+  45.6657 Mop/s: f64_to_f32, rounding nearest/away (nearest_maxMag), tininess after rounding
+  50.4725 Mop/s: f64_roundToInt, rounding nearest/even, not exact
+  61.0775 Mop/s: f64_roundToInt, rounding nearest/even, exact
+  60.2756 Mop/s: f64_roundToInt, rounding toward zero (minMag), not exact
+  60.1933 Mop/s: f64_roundToInt, rounding toward zero (minMag), exact
+  59.5270 Mop/s: f64_roundToInt, rounding down (min), not exact
+  55.3379 Mop/s: f64_roundToInt, rounding down (min), exact
+  53.8068 Mop/s: f64_roundToInt, rounding up (max), not exact
+  56.5720 Mop/s: f64_roundToInt, rounding up (max), exact
+  55.0878 Mop/s: f64_roundToInt, rounding nearest/away (nearest_maxMag), not exact
+  54.8813 Mop/s: f64_roundToInt, rounding nearest/away (nearest_maxMag), exact
+  16.2796 Mop/s: f64_add, rounding nearest/even
+  16.0230 Mop/s: f64_add, rounding toward zero (minMag)
+  14.9850 Mop/s: f64_add, rounding down (min)
+  14.9710 Mop/s: f64_add, rounding up (max)
+  16.1774 Mop/s: f64_add, rounding nearest/away (nearest_maxMag)
+  16.5060 Mop/s: f64_sub, rounding nearest/even
+  16.1682 Mop/s: f64_sub, rounding toward zero (minMag)
+  15.3367 Mop/s: f64_sub, rounding down (min)
+  15.1311 Mop/s: f64_sub, rounding up (max)
+  16.5140 Mop/s: f64_sub, rounding nearest/away (nearest_maxMag)
+  17.0451 Mop/s: f64_mul, rounding nearest/even, tininess before rounding
+  17.1822 Mop/s: f64_mul, rounding nearest/even, tininess after rounding
+  17.1719 Mop/s: f64_mul, rounding toward zero (minMag), tininess before rounding
+  17.2556 Mop/s: f64_mul, rounding toward zero (minMag), tininess after rounding
+  15.7958 Mop/s: f64_mul, rounding down (min), tininess before rounding
+  15.9389 Mop/s: f64_mul, rounding down (min), tininess after rounding
+  15.8028 Mop/s: f64_mul, rounding up (max), tininess before rounding
+  15.9309 Mop/s: f64_mul, rounding up (max), tininess after rounding
+  17.0551 Mop/s: f64_mul, rounding nearest/away (nearest_maxMag), tininess before rounding
+  17.1652 Mop/s: f64_mul, rounding nearest/away (nearest_maxMag), tininess after rounding
+  10.3166 Mop/s: f64_div, rounding nearest/even
+  10.2753 Mop/s: f64_div, rounding toward zero (minMag)
+   9.8607 Mop/s: f64_div, rounding down (min)
+   9.9128 Mop/s: f64_div, rounding up (max)
+  10.3143 Mop/s: f64_div, rounding nearest/away (nearest_maxMag)
+   3.5220 Mop/s: f64_rem
+   9.9013 Mop/s: f64_sqrt, rounding nearest/even
+   9.8576 Mop/s: f64_sqrt, rounding toward zero (minMag)
+   9.7355 Mop/s: f64_sqrt, rounding down (min)
+   9.8549 Mop/s: f64_sqrt, rounding up (max)
+   9.9165 Mop/s: f64_sqrt, rounding nearest/away (nearest_maxMag)
+  70.2675 Mop/s: f64_eq
+  42.0030 Mop/s: f64_le
+  42.8187 Mop/s: f64_lt
+  68.9780 Mop/s: f64_eq_signaling
+  41.9539 Mop/s: f64_le_quiet
+  43.0010 Mop/s: f64_lt_quiet

@@ -1,0 +1,97 @@
+Rocket is a microarchitecture which implements the 32-bit instruction format of the RISCV64 ISA.
+It includes a single issue, six stage, in order integer pipeline that interfaces through queues
+with a decoupled floating point unit.  The integer pipeline has a 31 entry, 64-bit register file and
+uses a scoreboard to detect data hazards involving instructions with multi-cycle latencies.
+A relatively small, fully associative branch target buffer (BTB) performs branch prediction.
+The processor has two operating modes: user and supervisor.  A synchronous trap 
+or external (asynchronous) interrupt can trigger a transition from user to supervisor mode.
+The integer pipeline implements precise exceptions, however floating point exceptions 
+do not cause a trap.
+
+The FPU supports single and double precision floating point operations and has a dedicated
+32 entry, 65 bit register file.  Floating point values are represented internally using an extra
+bit (65 bits for DP values, 33 bits for SP values).  Values are converted to and from this
+internal representation when floating point values are read from or written to memory.
+The FPU includes a pipelined fused multiply-add (FMA) pipeline as well as functional units to
+perform comparisons between floating point values and conversions between integer and floating
+point values.  Floating point exception information is recorded in a floating point status 
+register (FSR) and must be examined to detect the occurence of floating point exceptions.
+The FSR is also used to select rounding modes.
+
+Rocket supports page table based virtual memory. Address translation is performed by 
+separate instruction and data TLBs.  TLB misses are handled by a hardware page table walker
+(PTW) that looks up page table entries by issuing load requests to the data cache.
+
+The memory system includes separate virtually indexed, physically tagged instruction and data 
+caches.  The instruction cache is a standard set associative blocking cache with a prefetcher 
+that sits between it and the next level in the memory hierarchy. The data cache is non-blocking
+and supports multiple outstanding misses. In addition to loads and stores, the data cache
+also implements atomic memory operations (AMOs) and memory fence instructions.
+Loads are allowed to bypass earlier stores as long as they do not access the same address.
+Instructions that reach the memory stage and cannot complete execution (due to a DTLB or 
+cache miss, for example) result in a pipeline flush and a replay of the offending
+instruction.  A load instruction which misses in the data cache doesn't cause the pipeline
+to stall - only an attempt to use the result of the load before the data is present
+results in a stall.  A TLB miss will stall the pipeline until the required virtual to
+physical mapping has been located. 
+
+The six integer pipeline stages are:
+
+NPCGEN (next PC generate):
+  This stage selects the next address to load into the VPC (virtual program counter).
+  
+FETCH: 
+  This stage uses the ITLB to map the VPCs VPN to a PPN before performing a tag check
+  in the instruction cache.  Instructions are written from the cache into a 1-2 entry
+  instruction queue. The fetch stage also performs branch prediction using a BTB.
+  
+DECODE:
+ The decode stage fetches required operands from the register file, generates the control
+ signals required by later pipeline stages and stalls until all data dependencies and
+ structural hazards have been resolved before issuing the decoded instruction to the execute
+ stage. In addition to processing instructions from the fetch stage, it also schedules
+ writebacks from the FPU and integer divider to the integer regfile and handles memory
+ access requests from the host-target interface (HTIF).  Bypass muxes are present at
+ the end of the decode stage and can forward results from the execute, memory, and 
+ commit stages.  Bypass muxes are present in the execute and memory stages as well.
+ 
+EXECUTE:
+  The execute stage performs integer computations and includes a 64-bit integer ALU,
+  a pipelined integer multiplier, a sequential integer divider and branch resolution logic.
+  In the event of a mispredicted branch, the pipeline is flushed, the BTB is updated, 
+  and instruction fetch resumes from the correct PC.
+  
+MEMORY:
+  The memory stage uses the DTLB to perform address translation (and protection) for load,
+  store, and AMO instructions.  It checks load addresses to ensure that they don't conflict 
+  with any pending stores and allows loads to bypass stores whenever possible.
+  Store addresses for both integer and floating point store instructions are written to the
+  store address queue (SAQ), with a bit used to indicate type of store the address 
+  corresponds to. Separate queues are used for floating point and integer store
+  data (ISDQ and FSDQ). Load and AMO requests issued to the data cache include a tag
+  which encodes the destination of the load (integer or floating point regfile entry
+  or hardware page table walker) and the type of load (byte, halfword, word, doubleword,
+  signed, unsigned, single precision, double precision).  The data cache also implements
+  fence instructions (to ensure memory consistency in multicore systems).
+  
+  The end of the memory stage is the commit point. If any exceptions occurred
+  during the execution of an instruction, the PC of the offending instruction and the cause
+  of the exception are written to control registers. The processor then switches to 
+  supervisor mode (if configured to do so), flushes the pipeline and resumes fetching instructions
+  from the exception handler address.  The ERET instruction is used to return from an
+  exception and causes execution to resume (in user mode, if so configured) from the PC
+  of the instruction that caused the exception, or the one immediately following it.
+  Asynchronous interrupts are handled similarly, though care must be taken to select
+  a valid PC from which to resume execution after handling the interrupt.
+  (e.g. don't pick the PC of an instruction that has been squashed as the result of a
+  mispredicted branch)
+  
+COMMIT:
+  This stage completes the execution of 8,16 and 32 bit loads by extracting the proper subset of
+  bits from the 64 bit value provided by the data cache and performing sign extension as necessary.
+  Writebacks to the integer and control register files happen at the end of this stage, 
+  as do updates to the scoreboard.  Writes to all 3 of these memory structures are forwarded to
+  previous pipeline stages as necessary (prior to being committed).
+  
+
+  

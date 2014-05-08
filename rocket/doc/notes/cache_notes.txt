@@ -1,0 +1,95 @@
+notes from meeting on 8/31/2011
+
+instruction cache:
+------------------
+
+only activate one way for sequential memory accesses within a cache line (to save power)
+
+64 byte/512 bit cache line size
+possible options:
+    16K, 2 way set associative
+    32K, 4 way set associative
+    
+physical addresses are 40 bits, 8KB page size, so 27 tag bits
+    2 * 27 = 54 bits, 4 * 27 = 108 bits
+    per entry in TAG RAM
+    
+valid + LRU bits stored in flip flop/latch based structure
+    ways * 128 * 16 valid bits
+    128 * 2 LRU bits
+
+no hardware coherence in I$, use software (fence.i instruction)
+
+pseudo-LRU for 4-way set associative cache:
+
+each bit represents one branch point in a binary decision tree
+let 1 represent that the left side has been referenced more recently than the right side, 
+and 0 vice-versa
+
+                  are all 4 lines valid?
+                      / \
+                    yes no, use an invalid line
+                     |
+                     |
+                     |
+                bit_0 == 0?             state | replace   ref to | next state
+                  /       \             ------+--------   -------+-----------
+                 y         n             00x  | line_0    line_0 | 11_
+                /           \            01x  | line_1    line_1 | 10_
+         bit_1 == 0?    bit_2 == 0?      1x0  | line_2    line_2 | 0_1
+          /     \          /    \        1x1  | line_3    line_3 | 0_0
+        y        n        y      n
+       /          \      /        \     ('x' means don't care)
+     line_0    line_1 line_2   line_3   ('_' means unchanged)
+
+data cache:
+-----------
+
+64 bit output - optimize (power) for 32 bit accesses
+2 status bits - MESI + LRU bits
+
+load/store check: a load won't go ahead if there's a pending store to the same set
+    make sure cache line doesn't get kicked out
+    only use set bits to determine if there's a load/store conflict (conservative)
+    
+where to put store data?
+    first implementation - use a separate latch based structure:
+        PSDQ = pending store data queue
+    possibly store them in extra rows in the RAMs used for data storage
+    1 replay queue per MSHR
+    4/8 primary misses, 4/8 secondary misses per MSHR
+    
+coherence:
+    write to a "shared" line will generate coherence traffic
+    can get "upgrade" response, or "new data" if someone else has modified it
+    
+4 request/reponse ports from CPU to memory:
+
+    C2HQ (cache to home request)  -->  miss
+    H2CQ (home to cache request)  <--  invalidates/upgrades
+    C2HP (cache to home response) --> writeback
+    H2CP (home to cache response) <-- miss request refills
+    
+    coherence related state updates happen at the end of MEM stage
+    
+HTIF notes:
+    merge snoop and HTIF request interfaces
+    use a ring/chain structure to do HTIF control register accesses
+    
+------------
+
+D$ configuration options:
+    40 physical address bits, 8K pages (13 bit index), so 27 bit tag
+    64 byte/512 bit CL size
+    
+    32K 4 way SA:
+        32K / 64 bytes = 512 cache lines (2^9)
+        512 / 4 way SA = 128 sets (2^7)
+        7 set bits, 3 index bits (assuming 64 bit addressing)
+        
+    16K 2 way SA:
+        16K / 64 bytes = 256 cache lines (2^8)
+        256 / 2 way SA = 128 sets
+        7 set bits, 3 index bits (assuming 64 bit addressing)
+
+    

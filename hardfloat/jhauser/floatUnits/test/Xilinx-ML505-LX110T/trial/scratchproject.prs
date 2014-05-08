@@ -1,0 +1,70 @@
+#-- Synplicity, Inc.
+#-- Version C-2009.06
+#-- Project file U:\floatUnits\test\Xilinx-ML505-LX110T\trial\scratchproject.prs
+#-- Written on Fri Jul 09 14:14:52 2010
+
+
+#project files
+add_file -verilog "C:/Program Files (x86)/Synplicity/fpga_C200906/bin/../lib/xilinx/unisim.v"
+add_file -verilog "U:/floatUnits/test/Xilinx-ML505-LX110T/UARTDistributionDependencies.v"
+add_file -verilog "U:/floatUnits/test/Xilinx-ML505-LX110T/FPGA_TOP_ML505_UARTLoopback.v"
+add_file -constraint "U:/floatUnits/test/Xilinx-ML505-LX110T/trial/FPGA_TOP_ML505_UARTLoopback.sdc"
+
+
+#implementation: "trial"
+impl -add U:\floatUnits\test\Xilinx-ML505-LX110T\trial -type fpga
+
+#device options
+set_option -technology VIRTEX5
+set_option -part xc5vlx110t
+set_option -package ff1136
+set_option -speed_grade -3
+set_option -part_companion ""
+
+#compilation/mapping options
+set_option -use_fsm_explorer 0
+set_option -top_module "FPGA_TOP_ML505_UARTLoopback"
+
+# sequential_optimization_options
+set_option -symbolic_fsm_compiler 1
+
+# Compiler Options
+set_option -compiler_compatible 1
+set_option -resource_sharing 1
+
+# mapper_options
+set_option -frequency auto
+set_option -write_verilog 0
+set_option -write_vhdl 0
+
+# Xilinx Virtex2
+set_option -run_prop_extract 1
+set_option -maxfan 100
+set_option -disable_io_insertion 0
+set_option -pipe 1
+set_option -update_models_cp 0
+set_option -retiming 0
+set_option -no_sequential_opt 0
+set_option -fixgatedclocks 3
+set_option -fixgeneratedclocks 3
+
+# Xilinx Virtex5
+set_option -enable_prepacking 1
+
+#VIF options
+set_option -write_vif 1
+
+#automatic place and route (vendor) options
+set_option -write_apr_constraint 1
+
+#set result format/file last
+project -result_format "edif"
+project -result_file "U:/floatUnits/test/Xilinx-ML505-LX110T/trial/FPGA_TOP_ML505_UARTLoopback.edn"
+
+#
+#implementation attributes
+
+set_option -vlog_std v2001
+set_option -num_critical_paths 0
+set_option -num_startend_points 0
+impl -active "trial"

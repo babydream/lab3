@@ -1,0 +1,441 @@
+Design decisions and notes about future enhancements:
+
+* single issue, only supports 32-bit instructions
+  * dual issue necessary to saturate pipelined FPU
+  * supporting compressed instruction format will introduce significant additional complexity
+
+* 64-bit registers + memory addresses
+  * parameterize design in such a way as to easily support 32 or 64 bit operation
+
+* NOTE: The initial Rocket implementation (for CS250) will not support operation in a multiprocessor
+coherent shared memory context, though I have included thoughts about how such a system may
+be implemented.
+
+Notes on integer pipeline:
+--------------------------
+    
+NPCGEN stage:
+------------
+
+Description: The NPCGEN stage is responsible for selecting the next PC that 
+will be sent to the FETCH stage and verifying that it is a legal address.
+The NPC is selected from one of 6 sources:
+
+1) PC+4 adder in FETCH stage (for non-CTI instructions or predicted non-taken branches)
+2) Branch target buffer in FETCH stage (for predicted taken branches)
+3) EPC (from control register) in DECODE stage (for ERET instructions)
+4) ALU in EXECUTE (computed branch target address for mispredicted branches)
+5) EPC register in EXECUTE (PC of the instruction to replay after a data cache miss)
+6) EPC register in MEMORY (PC of a memory instruction that needs to be replayed)
+   * happens on a DTLB miss, load/store conflict, or the data cache being busy
+7) Exception handler address register (for exceptions)
+
+Requests from later pipe stages take precedence over earlier ones (exceptions have
+the highest priority, followed by replays, mispredicted branches, etc).  The VPC
+is not updated when the FETCH stage is stalled.
+
+If the NPC is not aligned to a 32-bit boundary, or the MSBs are not all 0 or 1,
+raise an exception.
+
+Exceptions: 
+    Instruction address misaligned
+
+FETCH stage:
+------------
+
+Description: The FETCH stage is responsible for translating a virtual PC into a
+physical address and fetching the corresponding instruction from memory, as well as
+performing branch prediction.
+
+The virtual page number (VPN) portion of the VPC is sent to the ITLB to obtain the
+physical page number (PPN) that it maps to, while the index bits of the VPC are
+sent to the I$ to initiate the access to its data array.  If the VPN hits
+in the ITLB, the PPN is sent to the I$ to perform the tag check.  If the VPN
+misses in the ITLB, a request for the PTE corresponding to that VPN is sent
+to the page table walker (PTW) and the pipeline stalls until the
+ITLB miss is resolved.  If no valid mapping is found for the VPN, or an attempt is
+made to access an address without sufficient permission, an exception is raised.
+
+If the translated address hits in the I$, the fetched instruction and its VPC are
+written to the instruction queue. On an I$ miss, the I$ sends a refill request to
+the prefetcher which eventually responds with the requested cache line,
+issuing requests to the next level of the memory hierarchy as necessary.
+Meanwhile the pipeline stalls until the miss is resolved, pushing bubbles into the
+pipeline with the EPC set to the VPC of the stalled instruction.
+
+In parallel, the VPC is sent to the branch target buffer (BTB) which decides
+whether to predict that the VPC corresponds to a taken branch and signals
+the NPCGEN stage accordingly.
+
+Exceptions:
+    Instruction access fault
+
+Major structures:
+    Branch target buffer
+    ITLB
+    Instruction cache
+    Prefetcher
+
+Branch target buffer:
+---------------------
+
+    The BTB takes the current VPC as input - if it predicts the instrunction is a taken branch, it
+asserts a control signal and sends the predicted branch target address to the NPCGEN stage.    
+The BTB is also connected to the EX stage so that it can be updated after branches are resolved.  
+The signals going to the BTB from the EX stage are:
+    
+        branch (high if the instruction in EX is a branch/jump),
+        mispredict (high if the branch was incorrectly predicted),
+        the PC of the instruction in EX, and the calculated
+        branch target address.
+    
+    Each BTB entry includes a 2 bit counter which represents 3 states: strongly taken, 
+weakly taken, and invalid. On a correctly predicted branch, the state shifts to the left, 
+and on a misprediction the state shifts to the right. 
+
+** Q: How associative is the BTB? replacement policy?  number of entries? invalidate on context
+switch?  Use ASIDs to tag BTB entries?
+               
+Krste says: make it fully associative - better utilization + lower power since fewer bits are 
+toggling in the comparators (vs. a direct mapped scheme) since only a few bits of PC are changing
+in the common case.  Don't bother flushing on a context switch, it will update it's state as
+needed.
+
+Also: implement the output muxes (here and in the TLBs) using a hierarchy of two input
+AOI muxes activated by a "one hot" encoding - this avoids the need to convert
+a one-hot encoded value (the outputs of the comparators) into a binary value which
+then feeds the select input of a mux.
+
+** Q: What is the max # of entries for which a fully associative scheme would make sense? 
+
+Krste says: probably 4 or 8
+
+ITLB:
+-----
+
+The ITLB is a fully associative memory structure which maps VPNs to PPNs.  We
+will support TLB entries that represent pages of various sizes - at least one "huge" page 
+to map the kernel into userspace in addition to some number of 8K pages.  Pseudorandom LRU
+(binary search tree method) will be used as the replacement policy. Probably 16 or 32 entries.
+
+Instruction cache:
+------------------
+
+The instruction cache will be a standard N-way set associative, blocking cache.  On a cache miss,
+VPC won't change and bubbles will be injected into the pipeline until the miss is resolved.
+
+** Q: Do we let asynchronous interrupts happen while the pipeline is stalled due to an ITLB or I$ miss?
+
+Krste says: yes, otherwise bad things could happen (i.e. you wouldn't receive a machine check
+exception if your memory system experienced and detected a major fault condition).
+
+Prefetcher:
+-----------
+
+A prefetcher sits between the I$ request/refill ports and the interface to the next level of the 
+memory hierarchy.  The prefetcher will fetch 2 consecutive cache lines any time there's an
+I$ miss caused by a non-sequential change in the VPC. If there is subsequently a miss to the second 
+cache line, the prefetcher provides it to the I$ and prefetches the next two cache lines.
+
+DECODE stage:
+-------------
+
+Description: The primary function of the DECODE stage is to process instructions
+from the instruction queue by waiting until there are no structural or data hazards,
+reading required operand values from the regfile and issuing decoded instructions
+(i.e. settings for control signals needed by later pipeline stages) to the
+EXECUTE stage.  Immediate fields in instructions are sign extended as necessary.
+In the Rocket pipeline, there are 4 other request queues with commands
+that must be handled by the DECODE stage:
+
+    Snoop request queue - contains snoop requests from remote nodes, used for coherence
+    HTIF request queue  - contains memory load/store requests from the host machine
+    FPU response queue  - contains values generated by the FPU that need to be written to the
+                         integer regfile
+    IDIV result queue   - contains the result of an IDIV instruction (single entry queue)
+    
+    Requests in these queues have a higher priority than regular instructions, so
+instructions will only be popped off the instruction queue if all other request
+queues are empty.
+
+An instruction stalls in the DECODE stage until all of its the data dependencies 
+and structural hazards have been resolved.
+
+The possible structural hazards are:
+
+    FP command or operand queue full (for FP instructions)
+    Store address or store data queue full (for stores)
+    D$ blocked (all memory instructions)
+    DTLB busy (all memory instructions)
+
+A scoreboard tracks which registers are "busy" waiting for a value to return from memory,
+the FPU or the integer divider. 
+
+Only FP instructions which write to the integer regfile (comparisons, FTOI, RDFSR)
+and integer divides always cause the busy bit for the destination register to be set.
+Writes to the scoreboard are forwarded to earlier pipeline stages until the instruction
+that set the busy bit reaches COMMIT.
+
+Load instructions (and AMOs) are issued to the pipeline assuming that they will hit in
+the D$, so their destination register is not initially marked as busy.  Even if a load
+hits in the D$, there is a 1 or 2 cycle (1 for 32/64 bit loads, 2 for all others)
+load->use delay for all instructions except stores (0 or 1 cycle delay).
+
+There are 4 conditions that can lead to the pipeline being flushed
+and an instruction being replayed:
+  D$ miss, DTLB miss, a load/store address conflict, or the cache being busy (aka blocked).
+
+When a D$ load miss occurs, the busy bit for the destination register is set 
+during the next cycle (when the load reaches the COMMIT stage) and the instruction
+immediately following the load (in program order) is replayed, since it was issued 
+assuming that the load value would be ready after a known number of cycles which
+was not to be the case.
+
+On a DTLB miss, the instruction that caused the miss is replayed and stalls
+in the decode stage until the DTLB is no longer busy handling the miss.
+
+When a load/store address conflict is detected, the offending load instruction 
+is replayed and should stall in the DECODE stage until the conflicting store address
+has drained from the store address queue. A conservative approach to handling this
+situation would be to stall until the store address queue is empty.
+
+AMOs stall in DECODE until the store address queue is empty.
+
+Memory fence instructions stall until all pending stores have been issued and ACKd.
+A store ACK counter is incremented when a store instruction is issued to the cache
+and decremented when the cache responds with an ACK. 
+
+To save power, only read operands from regfile when they are actually needed (won't be bypassed
+from later pipe stages).  For example, don't read two values from the regfile when the
+instruction only needs one.
+
+SYSCALL instructions raise a system call exception.
+
+BREAK instructions raise a breakpoint exception.
+
+If a privileged instruction is encountered while the pipeline is in user mode, the
+decode logic raises a "Privileged Instruction" exception.
+
+An undefined instruction causes an "Illegal instruction" exception
+
+There are bypass muxes at the end of the DECODE stage that can forward results from the
+end of the EXECUTE, MEMORY, or COMMIT stages.  Similair bypass muxes are used to forward
+writes to the scoreboard and control registers before the associated instructions have
+reached COMMIT.
+
+Major structures:
+    Register file (read)
+    Scoreboard (read)
+    Control registers (read)
+
+Exceptions:
+    Illegal instruction
+    Privileged instruction
+    Breakpoint
+    System call
+    
+EXECUTE stage:
+--------------
+
+Description: The EXECUTE stage is where integer arithmetic is performed.  A 64-bit ALU is used
+for arithmetic ops, to calculate branch/jump target addresses (PC relative), and to calculate
+memory addresses (register + offset addressing).  A branch resolution unit performs the
+comparisons needed to implement conditional branches.  A pipelined integer multiplier and
+a sequential integer divider handle IMUL and IDIV instructions.  We assume that the integer
+multiplier will be done by the time it reaches COMMIT.  Eventually the integer pipeline 
+will share the multiplier in the FPU FMA pipeline.
+
+For branch, jump register, and unconditional jump instructions, the EX stage must verify
+that the predicted NPC was correct.  This is done by checking the computed NPC against
+the EPC in the DECODE stage.
+
+If a branch was mispredicted, the pipeline is flushed and the correct branch target address is
+sent to the NPCGEN stage. After every branch or jump instruction, the BTB entry corresponding
+to the instruction's VPC is updated.
+
+There are bypass muxes at the end of the EXECUTE stage which can forward results from the
+MEMORY or COMMIT stages (for use by store or AMO instructions).
+
+Major structures:
+    ALU
+    Branch resolution and misprediction detection logic
+    Pipelined integer multiplier
+    Sequential integer divider
+    
+Exceptions: none (don't divide by zero!)
+
+MEMORY stage:
+-------------
+
+Description:  The MEMORY stage processes instructions which access the D$.  Virtual addresses are 
+translated to physical addresses by the DTLB, and load/store/AMO requests are issued to the D$.
+TLB misses are handled by a page table walker (PTW) which issues load requests to the D$ to
+fetch the page table entry corresponding to a given VPN.  For non-memory instructions, the
+MEMORY stage is only used to handle exceptions.
+
+The first step for all memory instructions is a DTLB lookup.  If executing an instruction
+would cause an access violation (i.e. attempting to write to a read-only page),
+an exception is raised.  If the lookup results in a DTLB miss, a request is sent to the
+PTW to fetch the necessary PTE, the pipeline is flushed and the instruction that caused
+the DTLB miss is replayed.  If the PTW determines that no valid mapping exists for the
+given address, an exception is raised.
+
+A store instruction which hits in the DTLB causes the translated address to be written into
+the store address queue (SAQ) along with an extra bit to indicate the type (integer/floating
+point) of the store.  For integer store instructions, the data is written into the integer
+store data queue (ISDQ) during the same cycle.  For floating point stores, a
+register read command is sent to the FPU, which writes the recoded contents of the requested 
+register to the FSDQ after some number of cycles.  When both the address and data
+for a store are ready, the store is issued to the D$ during an otherwise idle cycle.
+The pending store counter (PSC) is incremented for each store that is issued to the D$,
+and decremented for each store ACK received from the D$.  A memory fence instruction
+waits until the PSC is zero.  
+
+For a load instruction, the translated address is checked against the addresses in the
+SAQ before a request is issued to the D$.  If the load address matches any of the
+entries in the SAQ, the pipeline is flushed and the load instruction is replayed.
+If there are no load/store address conflicts, a load request is issued to the D$.
+Each request is accompanied by a tag that indicates the destination and type of the load.
+The destination can be either an entry in the integer register file, an entry in the
+floating point load data queue or the page table walker.  The type of the load can be
+signed/unsigned  byte/halfword/word/doubleword for integer loads, and single/double precision 
+for floating point loads.  For non-doubleword integer loads and single precision FP loads,
+the tag also includes the LSBs of the load address.
+
+AMO instructions are guaranteed not to trigger any load/store conflicts since they
+stall in DECODE until the SAQ is empty.  AMOs are handled like loads, except that
+the D$ is also provided with a "store data" value.
+
+Only the results of word/doubleword loads are bypassed from the end of the MEMORY stage
+to the DECODE or EXECUTE stages.  Byte and halfword loads must go through the crossbar
+and sign extension logic in the COMMIT stage, and thus incur an extra cycle of load-use
+delay.
+
+If any exceptions have been raised during the execution of an instruction or an external
+asynchronous interrupt has occurred, the pipeline is flushed, the CAUSE, EPC and 
+(if appropriate) the BADVADDR control registers are written. The operating mode (user/supervisor)
+may switch depending on how the S and PS bits in the status register are set.  The enable
+trap (ET) bit is cleared, and the NPCGEN stage is signaled to begin fetching instructions 
+from the exception handler address (stored in the EVEC register).  If a synchronous
+exception is detected while the ET bit is set, the processor enters error mode (whatever
+that means?).
+
+Asynchronous interrupts can only be taken when there is a valid EPC in the MEMORY
+stage.  This might not be the case, i.e. if the instruction has been squashed due to a
+pipeline flush. 
+
+The end of the MEMORY stage is the commit point - once an instruction leaves the MEMORY
+stage it is guaranteed to execute to completion.  For FP instructions, a command is
+written to the FP command queue.  For FP instructions that take integer operands (FTOI and
+MTFSR), a value is also written to the FPU integer operand queue.  
+
+** TODO: Describe in detail how HTIF and snoop requests are handled, as well as TLB shootdowns.
+
+Major structures:
+    DTLB
+    D$
+
+** TODO: design new non-blocking D$ since current design (hellacache) has unacceptably long latency
+for cache hits as well as some other quirks.
+
+Exceptions:
+    Data address misaligned
+    Load access fault
+    Store access fault
+    
+COMMIT stage:
+-------------
+
+Description:  Values are written to the integer regfile at the end of the COMMIT stage.
+The integer regfile has two write ports: one for load responses from the D$ and one
+for results from the integer pipeline.  Byte, halfword and word load responses pass through a
+crossbar and sign-extension logic before being written to the regfile.
+When data is written to the regfile, the scoreboard entries corresponding to the
+destination registers are cleared. Privileged control register updates (either as 
+the result of an exception, an MTPCR instruction or an ERET instruction) also happen
+at the end of the commit stage.
+
+** Q: how to handle pipeline hazards related to control register modifications (PTBR ASID
+change, user/supervisor mode change, etc).  Bypass control register writes or stall the pipeline
+until the control register write has committed?
+
+Krste says: bypassing is probably the way to go.
+
+Major structures: 
+    Register file (write)
+    Control registers (write)
+    Scoreboard (clear)
+    
+Notes on FP pipeline:
+---------------------
+
+The FPU pipeline includes a A 32-entry 3R1W regfile, a pipelined fused-multiply-add
+functional unit, floating point <-> integer conversion logic, floating point comparison logic,
+and a floating point status register (FSR) that keeps track of FP exceptions (using sticky bits)
+and is used to set the desired rounding mode.  Floating point values are represented
+internally using an extra bit and are recoded when values move to or from memory.
+A scoreboard is used to track registers that are waiting for data to be written back.
+
+The FPU connects to the integer pipeline and memory through 5 queues:
+
+Inputs to FPU:
+    FPU command queue (FCMDQ)  - contains commands to be executed by the FPU
+    FPU operand queue (FOQ)    - contains integer operands required by certain FP instructions
+    FPU load data queue (FLDQ) - contains FP values from memory
+    
+Outputs from FPU:
+    FPU response queue   (FRQ) - contains integer values generated by the FPU 
+    FPU store data queue (FSDQ) - contains FP values that will be written to memory
+    
+The integer pipeline writes commands to the FCMDQ when it encounters FP instructions.  For
+ITOF and MTFSR instructions, the integer pipeline also writes an integer operand to the
+FIOQ.  FP instructions that produce integer results (FTOI, MFFSR, MTFSR, FCMP) write them to
+the FRQ, and the integer pipeline writes them to the its regfile.
+
+FP store instructions result in a "register read"
+command being written to the FCMDQ, which causes the FPU to read a value from the FP regfile,
+recode it, and write the recoded value to the FSDQ.
+
+FP load instructions result in a "register writeback" command being written to the 
+FCMDQ.  When the FPU encounters such a command, it sets the busy bit for the given
+register.  When data is available in the FLDQ, it is recoded and written to the 
+FP regfile.  The FLDQ entry includes the destination register along with the data
+to be written.
+
+The FPLDQ is not a standard FIFO - it must be a "reordering" queue in order to correctly
+handle responses returning from the D$ out of order.  FP load requests are tagged with the
+address of an FPLDQ entry, and the values fetched from the FPLDQ by the FPU are guaranteed 
+to be in program order.  This is necessary to ensure that FP instructions are executed in
+program order so that FP exception bits are set correctly.
+
+** NOTE ** Make sure to correctly handle the situation Andrew described, where there could
+potentially be a race between setting the busy bit in the FPU scoreboard, and the load response
+coming back from the cache.  If the load response comes back before the busy bit is set, the
+busy bit will get set and the FPU will stall forever.
+
+DECODE stage:
+-------------
+
+The decode stage processes requests from two queues: the FCMDQ and the FLDQ.  The FLDQ
+contains values returning from memory that need to be recoded and written to the regfile.
+Requests in the FLDQ get priority over the FCMDQ.  When processing requests from the FCMDQ,
+the decode logic must stall until the source operands are available (either from the regfile
+or bypass muxes) and mark the destination register as busy in the scoreboard for ops with
+multi-cycle latencies.
+
+Results can be forwarded to the end of the DECODE stage from any of the EXECUTE stages.
+
+EXECUTE stage(s):
+----------------
+
+The execute stage contains the FMA pipeline, RECODE modules, FCMP, FTOI and ITOF
+modules.  The "sticky" exception bits in the FSR are updated during the commit stage.
+The execute stage will probably be ~3 stages deep (for an ASIC implementation of the
+FMA pipeline), but the other modules can probably execute in a single cycle.
+Data is written to the FSDQ as soon as it has been recoded (no need to wait until COMMIT stage).
+
+COMMIT stage:
+-------------
+
+Results are written back to the FP regfile and the FSR is updated.
+

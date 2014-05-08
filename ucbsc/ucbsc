@@ -1,0 +1,154 @@
+#! /usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#
+# UC Berkeley Memory Compiler v081610a
+# Rimas Avizienis, Yunsup Lee, and Kyle Wecker
+#
+
+import sys
+import os
+import shutil
+import ucbsc_v as v
+import ucbsc_cacti as cacti
+import ucbsc_lef as lef
+import ucbsc_lib as lib
+
+string_params  = ['baseName', 'opCond', 'fileName']
+integer_params = ['wordLength', 'numWords', 'numRWPorts', 'numRPorts', 'numWPorts', 'technology']
+boolean_params = ['debug', 'noBM']
+all_params = string_params + integer_params + boolean_params
+required_params = ['baseName', 'wordLength', 'numWords', 'numRWPorts', 'numRPorts', 'numWPorts', 'technology']
+
+def validate_conf(conf):
+  if conf == None:
+    return False
+
+  # Validate existence of required parameters
+  for key in required_params:
+    if key not in conf.keys():
+      print "Error: missing required parameter %s" % key
+      sys.exit()
+
+  # Set default values for optional parameters
+  if 'opCond' not in conf.keys():
+    conf['opCond'] = 'Typical'
+
+  if 'debug' not in conf.keys():
+    conf['debug'] = False
+
+  if 'noBM' not in conf.keys():
+    conf['noBM'] = False
+
+  if 'fileName' not in conf.keys():
+    conf['fileName'] = None
+
+  # Validate correctness of parameters
+  if conf['opCond'] not in ['Typical', 'B', 'W']:
+    print "Error: value of opCond must be in [Typical, B, W]"
+    sys.exit()
+
+  return True
+
+def main():
+  if len(sys.argv) < 2:
+    print 'Usage: %s <config_files> [--all/v/pd]' % sys.argv[0]
+    sys.exit()
+  
+  fnames = []
+  mode = "all"
+  for arg in sys.argv[1:]:
+    if arg.startswith('--'):
+      if(arg=='--v'):     mode = "v"
+      elif(arg=='--pd'):  mode = "pd"
+      elif(arg=='--all'): mode = "all"
+      else:
+        print "Unknown argument: %s" % arg
+        sys.exit()
+    else:
+      fnames.append(arg)
+
+  for fname in fnames:
+    print
+    print 'GENERATING %s' % fname
+    print 'UCB_VLSI_HOME=%s' % os.environ.get('UCB_VLSI_HOME')
+    print 'UCB_STDCELLS=%s' % os.environ.get('UCB_STDCELLS')
+    print
+
+    file = open(fname, 'r')
+    lines = file.readlines()
+    file.close()
+
+    confs = []
+    conf = None
+    for line in lines:
+      line = line.strip()
+      if line.strip().startswith("#") or line.strip() == "":
+        continue
+      elif line.startswith("conf:"):
+        if validate_conf(conf):
+          confs.append(conf)
+        conf = {}
+      else:
+        param, value = line.split(':')
+        param = param.strip()
+        value = value.strip()
+        if param in string_params:
+          conf[param] = line.split(':')[1].strip()
+        elif param in integer_params:
+          conf[param] = int(line.split(':')[1].strip())
+        elif param in boolean_params:
+          conf[param] = line.split(':')[1].strip() == 'True'
+
+    validate_conf(conf)
+    confs.append(conf)
+
+    for c in confs:
+      # Hack to assign variable names to elements of c
+      for param in all_params:
+        if param in c.keys():
+          exec('%s = c[param]' % param)
+        else:
+          exec('%s = None' % param)
+
+      numPorts = numRWPorts + numRPorts + numWPorts
+      if numPorts < 1 or numPorts > 2:
+        print 'Illegal number of ports: %d' % numPorts
+        print 'Legal values are 1 or 2'
+        sys.exit()  
+
+      if fileName == None:
+        if numPorts == 1:
+          fileName = '%s_%sx%s_1P' % (baseName, wordLength, numWords)
+        if numPorts == 2:
+          if numRWPorts == 2:
+            fileName = '%s_%sx%s_2P' % (baseName, wordLength, numWords)
+          elif numRWPorts == 0 and numRPorts == 1 and numWPorts == 1:
+            #fileName = '%s_%sx%s_1R_1W' % (baseName, wordLength, numWords)
+            fileName = '%s_%sx%s_2P' % (baseName, wordLength, numWords)
+          else:
+            print 'Illegal port configuration requested'
+            print 'Only supported configurations are 1RW port, 2 RW ports, or 1R and 1W port'
+            sys.exit()
+
+      if(mode == "v" or mode == "all"):
+        v.make_v(fileName, wordLength, numWords, numRWPorts, numRPorts, numWPorts, debug, noBM)
+      if(mode == "pd" or mode == "all"):
+        tempDir = "%s.pd.tmp" % fileName
+        if not os.path.isdir(tempDir):
+          os.mkdir(tempDir)
+        os.chdir(tempDir)
+
+        (readEnergy, writeEnergy, leakagePower, cactiWidth, cactiHeight, accessTime) = cacti.getModelValues(int(wordLength), int(numWords), int(numRWPorts), int(numRPorts), int(numWPorts), debug, technology)
+        area = lef.make_lef(fileName, wordLength, numWords, numRWPorts, numRPorts, numWPorts, cactiHeight, cactiWidth, debug, noBM, technology)
+        lib.make_lib(fileName, area, wordLength, numWords, numRWPorts, numRPorts, numWPorts, readEnergy, writeEnergy, leakagePower, accessTime, opCond, debug, noBM, technology)
+
+        os.chdir('../')
+        shutil.move(tempDir+'/'+fileName+'.lef', fileName+'.lef')
+        shutil.move(tempDir+'/'+fileName+'.mw',  fileName+'.mw')
+        shutil.move(tempDir+'/'+fileName+'.lib', fileName+'.lib')
+        shutil.move(tempDir+'/'+fileName+'.db',  fileName+'.db')
+        shutil.rmtree(tempDir)
+
+if __name__ == '__main__':
+  main()

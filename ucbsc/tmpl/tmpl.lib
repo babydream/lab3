@@ -1,0 +1,243 @@
+##
+## UC Berkeley Memory Compiler v081610a
+## Rimas Avizienis, Yunsup Lee, and Kyle Wecker
+##
+## Cheetah template for the lib file
+##
+#def makeClockPinRW($base, $port, $capacitance='0.001')
+    pin($base$port) {
+      direction : input;
+      clock : true;
+      capacitance : $capacitance;
+      related_power_pin : VDD;
+      related_ground_pin : VSS;
+      
+      internal_power() {
+        when : "!CE$port*!CSB$port*!WEB$port";
+        fall_power(scalar) {
+          values("$write_energy");
+        }
+        rise_power(scalar) {
+          values("$write_energy");
+        }
+      }
+      internal_power() {
+        when : "!CE$port*!CSB$port*WEB$port*!OEB$port";
+        fall_power(scalar) {
+          values("$read_energy");
+        }
+        rise_power(scalar) {
+          values("$read_energy");
+        }
+      }
+    }
+#end def
+#def makeClockPinR($base, $port, $capacitance='0.001')
+    pin($base$port) {
+      direction : input;
+      clock : true;
+      capacitance : $capacitance;
+      related_power_pin : VDD;
+      related_ground_pin : VSS;
+      
+      internal_power() {
+        when : "!CE$port*!CSB$port*!OEB$port";
+        fall_power(scalar) {
+          values("$read_energy");
+        }
+        rise_power(scalar) {
+          values("$read_energy");
+        }
+      }
+    }
+#end def
+#def makeClockPinW($base, $port, $capacitance='0.001')
+    pin($base$port) {
+      direction : input;
+      clock : true;
+      capacitance : $capacitance;
+      related_power_pin : VDD;
+      related_ground_pin : VSS;
+      
+      internal_power() {
+        when : "!CE$port*!CSB$port*!WEB$port";
+        fall_power(scalar) {
+          values("$write_energy");
+        }
+        rise_power(scalar) {
+          values("$write_energy");
+        }
+      }
+    }
+#end def
+#def makeInputTiming($port)
+      timing () {
+        timing_type : setup_rising;
+        intrinsic_rise : $setup_time;
+        intrinsic_fall : $setup_time;
+        related_pin : "CE$port";
+      }
+      timing () {
+        timing_type : hold_rising;
+        intrinsic_rise : $hold_time;
+        intrinsic_fall : $hold_time;
+        related_pin : "CE$port";
+      }
+#end def
+#def makeInputPin($base, $port, $capacitance='0.001' )
+    pin($base$port) {
+      direction : input;
+      capacitance : $capacitance;
+      related_power_pin : VDD;
+      related_ground_pin : VSS;
+$makeInputTiming($port)
+    }
+#end def
+#def makeInputBus($base, $port, $busname, $capacitance='0.001' )
+    bus($base$port) {
+      bus_type : $busname ;
+      direction : input;
+      capacitance : $capacitance;
+      related_power_pin : VDD;
+      related_ground_pin : VSS;
+$makeInputTiming($port)
+    }
+#end def
+#def makeOutputBus($base, $port, $bus_type, $capacitance='0.001', $rise_resistance='0.01', $fall_resistance='0.01' )
+    bus($base$port) {
+      bus_type : $bus_type ;
+      direction : output;
+      capacitance : $capacitance;
+      related_power_pin : VDD;
+      related_ground_pin : VSS;
+      timing () {
+        timing_type : "rising_edge";
+        related_pin : "CE$port";
+        intrinsic_rise : $access_time ;
+        rise_resistance : $rise_resistance ;
+        intrinsic_fall : $access_time ;
+        fall_resistance : $fall_resistance ;
+      }
+    }
+#end def
+library("$fileName") {
+  technology (cmos) ;
+  delay_model : "generic_cmos";
+  simulation  : true ;
+  nom_process : 1 ;
+  nom_temperature : $temperature;
+  nom_voltage : $voltage;
+  voltage_map(COREVDD1, $voltage);
+  voltage_map(COREGND1, 0.0);
+  operating_conditions("$opCond"){
+      process : 1;
+      temperature : $temperature;
+      voltage : $voltage;
+      tree_type : "balanced_tree";
+  }
+  default_operating_conditions : $opCond ;
+  capacitive_load_unit (1,pf) ;
+  voltage_unit : "1V" ;
+  current_unit : "1mA" ;
+  time_unit : "1ns" ;
+  pulling_resistance_unit : "1kohm"; 
+  leakage_power_unit : "1pW" ;        
+  library_features (report_delay_calculation);
+  default_leakage_power_density : 0.0;
+  default_fanout_load : 1;
+
+  default_max_transition :      0.05
+  default_inout_pin_cap :       0.001081
+  default_input_pin_cap :       0.001081
+  default_output_pin_cap :      0
+
+  slew_lower_threshold_pct_rise :  30.00
+  slew_upper_threshold_pct_rise :  70.00
+  slew_derate_from_library :  0.50
+  input_threshold_pct_fall :  50.00
+  output_threshold_pct_fall :  50.00
+  input_threshold_pct_rise :  50.00
+  output_threshold_pct_rise :  50.00
+  slew_lower_threshold_pct_fall :  30.00
+  slew_upper_threshold_pct_fall :  70.00
+  type( IO_bus_${wordLength-1}_to_0 ) {
+    base_type : array ;
+    data_type : bit
+    bit_width : $wordLength ;
+    bit_from : ${wordLength-1} ;
+    bit_to : 0 ;
+    downto : true ;
+  }
+  type( A_bus_${lgnumWords-1}_to_0 ) {
+    base_type : array ;
+    data_type : bit
+    bit_width : $lgnumWords ;
+    bit_from : ${lgnumWords-1} ;
+    bit_to : 0 ;
+    downto : true ;
+  }
+  type( BM_bus_${wordLength/8-1}_to_0 ) {
+    base_type : array ;
+    data_type : bit
+    bit_width : ${wordLength/8} ;
+    bit_from : ${wordLength/8-1} ;
+    bit_to : 0 ;
+    downto : true ;
+  }
+
+  cell ($fileName) {
+    area :  $area;
+    cell_leakage_power : $leakage_power ;
+
+    pg_pin(VDD) {
+        pg_type : primary_power;
+        voltage_name : COREVDD1;
+    }
+    pg_pin(VSS) {
+        pg_type : primary_ground;
+        voltage_name : COREGND1;
+    }
+
+## READ/WRITE PORTS
+#set $portNum = 1
+#for i in range(0,$numRWPorts)
+$makeClockPinRW('CE',$portNum,'0.010')
+  #for pin in $rw_inputpins
+$makeInputPin($pin,$portNum,'0.010')
+  #end for
+  #for bus in $rw_inputbuses
+    #if $bus[0] or not $noBM
+$makeInputBus($bus[1],$portNum,$bus[2])
+    #end if
+  #end for
+$makeOutputBus($outputbus[0],$portNum,$outputbus[1])
+#set $portNum = $portNum + 1
+#end for
+## READ ONLY PORTS
+#for i in range(0,$numRPorts)
+$makeClockPinR('CE',$portNum,'0.010')
+  #for pin in $r_inputpins
+$makeInputPin($pin,$portNum,'0.010')
+  #end for
+  #for bus in $r_inputbuses
+$makeInputBus($bus[1],$portNum,$bus[2])
+  #end for
+$makeOutputBus($outputbus[0],$portNum,$outputbus[1])
+#set $portNum = $portNum + 1
+#end for
+## WRITE ONLY PORTS
+#for i in range(0,$numWPorts)
+$makeClockPinW('CE',$portNum,'0.010')
+  #for pin in $w_inputpins
+$makeInputPin($pin,$portNum,'0.010')
+  #end for
+  #for bus in $rw_inputbuses
+    #if $bus[0] or not $noBM
+$makeInputBus($bus[1],$portNum,$bus[2])
+    #end if
+  #end for
+#set $portNum = $portNum + 1
+#end for
+  }
+}
+

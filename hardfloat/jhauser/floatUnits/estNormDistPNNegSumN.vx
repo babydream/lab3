@@ -1,0 +1,21 @@
+
+param intT N, size;
+param intT normDistSize = ceilLog2( size + N );
+
+
+module estNormDistP<N>NegSum<size>( a, b, out );
+
+    input  [size-1:0]         a, b;
+    output [normDistSize-1:0] out;
+
+    wire [size-1:0] key;
+
+    assign key = ( a ^ b ) ^~ ( ( a & b )<<1 );
+    first for ( intT i; size-1:1 ) if ( key[i] ) {
+        assign out = size - 1 - i + N;
+    } else {
+        assign out = size - 1 + N;
+    }
+
+endmodule
+

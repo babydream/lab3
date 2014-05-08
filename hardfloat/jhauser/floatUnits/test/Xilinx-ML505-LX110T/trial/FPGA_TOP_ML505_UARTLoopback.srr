@@ -1,0 +1,122 @@
+#Build: Synplify Pro C-2009.06, Build 063R, May 19 2009
+#install: C:\Program Files (x86)\Synplicity\fpga_C200906
+#OS:  6.1
+#Hostname: SUPERSQUISH
+
+#Implementation: trial
+
+#Fri Jul 09 14:14:52 2010
+
+$ Start of Compile
+#Fri Jul 09 14:14:52 2010
+
+Synopsys Verilog Compiler, version comp400rc, Build 020R, built May 20 2009
+Copyright (C) 1994-2009, Synopsys Inc.  All Rights Reserved
+
+@I::"C:\Program Files (x86)\Synplicity\fpga_C200906\lib\xilinx\unisim.v"
+@I::"C:\Program Files (x86)\Synplicity\fpga_C200906\lib\xilinx\unisim_m10i.v"
+@I::"C:\Program Files (x86)\Synplicity\fpga_C200906\bin\..\lib\xilinx\unisim.v"
+@I::"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v"
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":1941:25:1941:35|Reference to unknown variable SPGCTL_LFSR
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":1989:25:1989:38|Reference to unknown variable PatternControl
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":2151:7:2151:16|Reference to unknown variable CountWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":2158:34:2158:49|Reference to unknown variable EnableCountFixed
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":2411:7:2411:11|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":2674:7:2674:16|Reference to unknown variable CountWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":2682:27:2682:27|Reference to unknown variable EGControlMask
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":2867:7:2867:12|Reference to unknown variable PWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":2990:7:2990:11|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3140:9:3140:13|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3144:29:3144:36|Reference to unknown variable OutValid
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3303:7:3303:11|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3304:16:3304:20|Reference to unknown variable Depth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3305:17:3305:21|Reference to unknown variable Depth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3804:7:3804:12|Reference to unknown variable AWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3806:7:3806:11|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3985:7:3985:12|Reference to unknown variable WDepth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3986:7:3986:12|Reference to unknown variable WDepth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3988:7:3988:11|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3989:7:3989:12|Reference to unknown variable WDepth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3990:7:3990:11|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3991:7:3991:12|Reference to unknown variable WDepth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3992:7:3992:11|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3993:7:3993:12|Reference to unknown variable WDepth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3994:7:3994:12|Reference to unknown variable WDepth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":3996:7:3996:12|Reference to unknown variable WDepth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":4225:7:4225:11|Reference to unknown variable Width
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":4232:26:4232:34|Reference to unknown variable FWLatency
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":4413:10:4413:13|Full is already declared in this scope.
+@E: CG339 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":8084:17:8084:19|No definition for function/task gcd
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":8939:47:8939:53|Reference to unknown variable $random
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9109:7:9109:12|Reference to unknown variable NWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9111:7:9111:13|Reference to unknown variable WCWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9128:44:9128:53|Reference to unknown variable STATE_Fill
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9409:7:9409:12|Reference to unknown variable NWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9410:7:9410:13|Reference to unknown variable WCWidth
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9415:19:9415:32|LastCUTOutData is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9415:35:9415:48|PrevCUTOutData is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9415:51:9415:68|ExpectedCUTOutData is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9416:10:9416:13|Skip is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9416:16:9416:20|Match is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9417:10:9417:17|ErrorInc is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9417:29:9417:41|DataChangeInc is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9419:14:9419:25|CurrentState is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9419:28:9419:36|NextState is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9420:10:9420:21|TestTerminal is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9421:10:9421:16|Running is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9422:10:9422:23|ReportTransfer is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9422:26:9422:38|CUTInTransfer is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9422:41:9422:54|CUTOutTransfer is already declared in this scope.
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9422:57:9422:67|LastDCValid is already declared in this scope.
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9432:44:9432:53|Reference to unknown variable STATE_Fill
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9796:31:9796:42|Reference to unknown variable MeasureValid
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":9971:7:9971:12|Reference to unknown variable NPorts
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":10232:8:10232:13|Reference to unknown variable Groups
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":10336:37:10336:41|Reference to unknown variable Valid
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":10492:27:10492:27|Reference to unknown variable Bin
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":10920:7:10920:12|Reference to unknown variable SWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":10922:7:10922:12|Reference to unknown variable CWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":11126:7:11126:12|Reference to unknown variable CWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":11127:7:11127:12|Reference to unknown variable SWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":11553:24:11553:26|Reference to unknown variable LSb
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":11662:8:11662:13|Reference to unknown variable CWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":11788:43:11788:45|Reference to unknown variable Max
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":11927:26:11927:32|Reference to unknown variable Limited
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":12035:20:12035:26|Reference to unknown variable Initial
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":12159:7:12159:12|Reference to unknown variable PWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":12229:7:12229:12|Reference to unknown variable PWidth
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":12342:19:12342:23|Count is already declared in this scope.
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":12349:22:12349:31|Reference to unknown variable AsyncReset
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":12452:10:12452:16|NoLimit is already declared in this scope.
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":12459:26:12459:32|Reference to unknown variable Limited
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":13063:7:13063:13|Reference to unknown variable ShWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":13071:26:13071:30|Reference to unknown variable Shift
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":13515:7:13515:13|Reference to unknown variable XIWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":13637:7:13637:12|Reference to unknown variable CWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":13651:30:13651:36|Reference to unknown variable Divisor
+@W: CG479 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":13836:19:13836:23|Count is already declared in this scope.
+@W: CS133 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":14856:53:14856:64|ignoring property syn_srlstyle
+@E: CG245 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":15841:11:15841:14|parameters of type real/realtime/time are not yet supported
+@E: CG252 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":15841:11:15841:14|Expecting parameter name
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":15985:21:15985:24|Reference to unknown variable AReg
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16014:8:16014:14|Reference to unknown variable ABShift
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16029:8:16029:14|Reference to unknown variable BAShift
+@W: CS133 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16090:69:16090:76|ignoring property syn_hier
+@W: CS133 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16107:55:16107:62|ignoring property syn_keep
+@W: CS133 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16324:55:16324:65|ignoring property syn_useioff
+@W: CS133 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16324:71:16324:73|ignoring property iob
+@W: CS133 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16324:82:16324:88|ignoring property useioff
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16463:22:16463:27|Reference to unknown variable NPorts
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16465:7:16465:12|Reference to unknown variable AWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16466:29:16466:34|Reference to unknown variable NPorts
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16729:7:16729:12|Reference to unknown variable AWidth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":16736:27:16736:31|Reference to unknown variable Depth
+@E: CG100 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":17141:7:17141:12|Reference to unknown variable NPorts
+@E: CS187 :"U:\floatUnits\test\Xilinx-ML505-LX110T\UARTDistributionDependencies.v":17295:0:17295:8|Expecting endmodule
+@I::"U:\floatUnits\test\Xilinx-ML505-LX110T\FPGA_TOP_ML505_UARTLoopback.v"
+@E|Can't open file Const.v
+@END
+Process took 0h:00m:02s realtime, 0h:00m:01s cputime
+# Fri Jul 09 14:14:54 2010
+
+###########################################################]

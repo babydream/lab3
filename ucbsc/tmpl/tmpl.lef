@@ -1,0 +1,50 @@
+##
+## UC Berkeley Memory Compiler v081610a
+## Rimas Avizienis, Yunsup Lee, and Kyle Wecker
+##
+## Cheetah template for the lef file
+##
+##raw
+##
+## LEF OUT
+##
+##end raw
+VERSION 5.5 ;
+NAMESCASESENSITIVE ON ;
+BUSBITCHARS "[]" ;
+DIVIDERCHAR "/" ;
+
+MACRO $fileName
+  CLASS BLOCK ;
+  SOURCE USER ;
+  ORIGIN 0 0 ;
+  SIZE $cell_width BY $cell_height ;
+  SYMMETRY X Y R90 ;
+
+#for $pin in $pins
+  PIN $pin[0]
+    DIRECTION $pin[1] ;
+    USE $pin[2] ;
+  #for $layer in $pin[3]
+    PORT
+      LAYER $layer ;
+        RECT $pin[4] $pin[5] $pin[6] $pin[7] ;
+    END
+  #end for
+  END $pin[0]
+
+#end for
+  OBS
+#for $layer in $obslayers
+    LAYER $layer ;
+  #for $obs in $obstructions
+    #if $layer in $obs[4]
+      RECT $obs[0] $obs[1] $obs[2] $obs[3] ;
+    #end if
+  #end for
+#end for
+  END
+
+END $fileName
+
+END LIBRARY

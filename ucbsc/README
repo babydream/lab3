@@ -1,0 +1,9 @@
+UCB Memory Compiler README
+
+4/12/2013: Yunsup Lee
+  - compile cacti65 first
+  - cleanup; remove ucbcc
+
+8/18/2010: Yunsup Lee
+  - initial commit
+  - you need Cheetah a template engine for python to run the code

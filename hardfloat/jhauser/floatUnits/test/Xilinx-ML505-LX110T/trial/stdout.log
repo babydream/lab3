@@ -1,0 +1,41 @@
+Invalid argument on command line: -tcl FPGA_TOP_ML505_UARTLoopback_map.tcl
+
+Your license will expire in 3 days!
+
+
+
+Starting:    C:\Program Files (x86)\Synplicity\fpga_C200906\bin\mbin\synbatch.exe
+Install:     C:\Program Files (x86)\Synplicity\fpga_C200906
+Date:        Fri Jul 09 14:14:52 2010
+Version:     C-2009.06
+
+
+Arguments:   -product synplify_pro -batch  FPGA_TOP_ML505_UARTLoopback.prj -tcl FPGA_TOP_ML505_UARTLoopback_map.tcl
+ProductType: synplify_pro
+
+License checkout: synplifypro
+License: synplifypro from server sunv210-2.eecs.berkeley.edu 
+
+Running in Vendor Mode
+
+
+
+"modular" is unrecognized option for current device
+
+Running synthesis on FPGA_TOP_ML505_UARTLoopback:trial
+
+log file: "U:\floatUnits\test\Xilinx-ML505-LX110T\trial\FPGA_TOP_ML505_UARTLoopback.srr"
+
+
+Running Verilog Compiler...
+
+Job: "Verilog Compiler" terminated with error status: 2.
+See log file: "U:\floatUnits\test\Xilinx-ML505-LX110T\trial\FPGA_TOP_ML505_UARTLoopback.srr"
+Return Code: 2
+
+
+Verilog Compiler exited with errors
+
+exit status=2
+
+

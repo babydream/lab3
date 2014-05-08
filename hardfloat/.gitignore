@@ -1,0 +1,4 @@
+sbt/hardfloat/target/
+sbt/project/target/
+sbt/target/
+target
