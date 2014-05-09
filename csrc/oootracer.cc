@@ -38,6 +38,7 @@ void Tracer_t::start()
    trace_data.dc_secondary_miss = 0;
 
    /* XXX Step 2: INITIALIZE YOUR COUNTERS HERE */
+   trace_data.two_issue_slots_counter = 0;
 }
 
 
@@ -97,9 +98,7 @@ void Tracer_t::monitor_issue_window(Top_t *tile)
    // ...
    
    uint64_t num_ready_to_issue = 0;
-
-/******
- *
+   /***
    // an example of reading the valid bit of IntegerIssueSlot number n
    fprintf(logfile, "CYC %llu:\n",
      tile->Top_BoomTile_core_dpath__my_cycle.lo_word());
@@ -119,15 +118,111 @@ void Tracer_t::monitor_issue_window(Top_t *tile)
      MONITOR_ISSUE_SLOT(3)
      // ...
      fprintf(logfile, "\n");
-*****/ 
-
+   ***/
    /* XXX Step 3. WRITE YOUR CODE HERE*/
-      
+   uint64_t valid0 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_0__slot_valid.lo_word();
+   uint64_t valid1 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_1__slot_valid.lo_word();
+   uint64_t valid2 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_2__slot_valid.lo_word();
+   uint64_t valid3 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_3__slot_valid.lo_word();
+
+   uint64_t requested0 = tile->Top__io_debug_0_issue_slot_request_0.lo_word();
+   uint64_t requested1 = tile->Top__io_debug_0_issue_slot_request_1.lo_word();
+   uint64_t requested2 = tile->Top__io_debug_0_issue_slot_request_2.lo_word();
+   uint64_t requested3 = tile->Top__io_debug_0_issue_slot_request_3.lo_word();
+
+   uint64_t load0 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_0__slotUop_is_load.lo_word();
+   uint64_t load1 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_1__slotUop_is_load.lo_word();
+   uint64_t load2 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_2__slotUop_is_load.lo_word();
+   uint64_t load3 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_3__slotUop_is_load.lo_word();;
+
+   uint64_t save0 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_0__slotUop_is_store.lo_word();
+   uint64_t save1 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_1__slotUop_is_store.lo_word();
+   uint64_t save2 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_2__slotUop_is_store.lo_word();
+   uint64_t save3 = tile->Top_BoomTile_core_dpath_issue_unit_IntegerIssueSlot_3__slotUop_is_store.lo_word();
+
+   uint64_t aluops = 0;
+   uint64_t memops = 0;       
+
+   /* 2.5.2 -- outputs 0 for all
+   if (!paused) {
+     if (valid0 && (requested0 != 0)) {
+       if (requested0 < 5)
+	 memops++;
+       else
+	 aluops++;
+     }
+     if (valid1 && (requested1 != 0)) {
+       if (requested1 < 5)
+	 memops++;
+       else
+	 aluops++;
+     }
+     if (valid2 && (requested2 != 0)) {
+       if (requested2 < 5)
+	 memops++;
+       else
+	 aluops++;
+     }
+     if (valid3 && (requested3 != 0)) {
+       if (requested3 < 5)
+	 memops++;
+       else
+	 aluops++;
+     }
+     if (aluops > 0 && memops == 1)
+       trace_data.two_issue_slots_counter++;
+   }
+   */
+   
+   if (!paused) {
+     if (valid0) {
+       if (save0 == 1 || load0 == 1)
+	 memops++;
+       else if (requested0 != 0)
+	 aluops++;
+     }
+     if (valid1) {
+       if (save1 == 1 || load1 == 1)
+	 memops++;
+       else if (requested1 != 0)
+	 aluops++;
+     }
+     if (valid2) {
+       if (save2 == 1 || load2 == 1)
+	 memops++;
+       else if (requested2 != 0)
+	 aluops++;
+     }
+     if (valid3) {
+       if (save3 == 1 || load3 == 1)
+	 memops++;
+       else if (requested3 != 0)
+	 aluops++;
+     }
+     if (memops == 1 && aluops > 0)
+       trace_data.two_issue_slots_counter++;
+   }
+   
+   /* 2.4 code
+   if (!paused) {
+     if (valid0 && (requested0 != 0))
+	 num_ready_to_issue++;
+     if (valid1 && (requested1 != 0))
+       num_ready_to_issue++;
+     if (valid2 && (requested2 != 0))
+       num_ready_to_issue++;
+     if (valid3 && (requested3 != 0))
+       num_ready_to_issue++;
+   }
+   */
 
    // insert code that increments "num_ready_to_issue" 
 
    // insert code that increments your counters
-
+   /* 2.4 code
+   if (num_ready_to_issue >= 2)
+     trace_data.two_issue_slots_counter++;
+   */
 }
 
                                    
@@ -191,7 +286,7 @@ void Tracer_t::print()
    uint64_t primary_misses = trace_data.dc_miss - trace_data.dc_secondary_miss;
 
    /* XXX Step 4. PRINT YOUR COUNTERS HERE */
-   
+   fprintf(logfile, "#         - Two Issue Slots Requested        :   %d\n", trace_data.two_issue_slots_counter);
    
    fprintf(logfile, "#-----------------------------------\n");
    fprintf(logfile, "\n");
