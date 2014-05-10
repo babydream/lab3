@@ -142,84 +142,53 @@ void Tracer_t::monitor_issue_window(Top_t *tile)
 
    uint64_t aluops = 0;
    uint64_t memops = 0;       
-
-   /* 2.5.2 -- outputs 0 for all
+      
    if (!paused) {
-     if (valid0 && (requested0 != 0)) {
-       if (requested0 < 5)
-	 memops++;
-       else
-	 aluops++;
-     }
-     if (valid1 && (requested1 != 0)) {
-       if (requested1 < 5)
-	 memops++;
-       else
-	 aluops++;
-     }
-     if (valid2 && (requested2 != 0)) {
-       if (requested2 < 5)
-	 memops++;
-       else
-	 aluops++;
-     }
-     if (valid3 && (requested3 != 0)) {
-       if (requested3 < 5)
-	 memops++;
-       else
-	 aluops++;
-     }
-     if (aluops > 0 && memops == 1)
-       trace_data.two_issue_slots_counter++;
-   }
-   */
-   
-   if (!paused) {
-     if (valid0) {
+     if ((valid0 != 0) && (requested0 != 0)) {
        if (save0 == 1 || load0 == 1)
 	 memops++;
-       else if (requested0 != 0)
+       else
 	 aluops++;
      }
-     if (valid1) {
+     if ((valid1 != 0) && (requested1 != 0)) {
        if (save1 == 1 || load1 == 1)
 	 memops++;
-       else if (requested1 != 0)
+       else
 	 aluops++;
      }
-     if (valid2) {
+     if ((valid2 != 0) && (requested2 != 0)) {
        if (save2 == 1 || load2 == 1)
 	 memops++;
-       else if (requested2 != 0)
+       else
 	 aluops++;
      }
-     if (valid3) {
+     if ((valid3 != 0) && (requested3 != 0)) {
        if (save3 == 1 || load3 == 1)
 	 memops++;
-       else if (requested3 != 0)
+       else
 	 aluops++;
      }
      if (memops == 1 && aluops > 0)
        trace_data.two_issue_slots_counter++;
    }
-   
+  
    /* 2.4 code
    if (!paused) {
-     if (valid0 && (requested0 != 0))
+     if ((valid0 != 0) && (requested0 != 0))
 	 num_ready_to_issue++;
-     if (valid1 && (requested1 != 0))
+     if ((valid1 != 0) && (requested1 != 0))
        num_ready_to_issue++;
-     if (valid2 && (requested2 != 0))
+     if ((valid2 != 0) && (requested2 != 0))
        num_ready_to_issue++;
-     if (valid3 && (requested3 != 0))
+     if ((valid3 != 0) && (requested3 != 0))
        num_ready_to_issue++;
    }
-   */
-
+   
    // insert code that increments "num_ready_to_issue" 
 
    // insert code that increments your counters
-   /* 2.4 code
+   
+   // 2.4 code
    if (num_ready_to_issue >= 2)
      trace_data.two_issue_slots_counter++;
    */
